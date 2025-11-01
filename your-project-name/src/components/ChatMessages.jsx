@@ -1,22 +1,49 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { useEffect,useState } from "react";
+import axios from "axios";
 
-function ChatMessages(){
+function ChatMessages({chatId}){
+
+    const [messages, setMessages] = useState([]);
     const API_BASE = "http://localhost:5000";
 
-    async function createChat(userId, title) {
-        const res = await fetch(`${API_BASE}/chats`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId, title }),
-        });
-        return res.json();
-    }
+    useEffect(() => {
+        if (!chatId) return;
+        axios
+            .get(`${API_BASE}/chats/${chatId}/messages`)
+            .then((res) => {
+                setMessages(res.data.messages);
+            })
+            .catch((err) => {
+                console.error("Error fetching messages:", err);
+            });
+    }, [messages,chatId]);
 
     return(
         <>
-            <div className="chat-messages">
-                
+            <div className="chat-messages-container">
+                {messages.map((message, index) =>{
+                    if(message.role === "user"){
+                        return(
+                                <div key={index} className="chat-message-container">
+                                    <div className="chat-message-content">
+                                        {message.content}
+                                    </div>
+                                </div>
+                            )
+                    }
+                    else{
+                        return(
+                            <div key={index} className="chat-message-container">
+                                <div className="chat-message-content"></div>
+                                <div className="chat-message-content">
+                                    {message.content}
+                                </div>
+                            </div>
+                        )
+                    }
+                })}
             </div>
         </>
     )
