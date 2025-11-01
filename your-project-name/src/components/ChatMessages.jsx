@@ -1,5 +1,3 @@
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { useEffect,useState } from "react";
 import axios from "axios";
 

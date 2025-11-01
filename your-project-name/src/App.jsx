@@ -1,30 +1,32 @@
-// import { useState } from 'react'
 import Chat from "./components/Chat.jsx";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCommentDots } from '@fortawesome/free-regular-svg-icons';
+import AllChats from "./components/AllChats.jsx";
+
 import "./assets/css/main.css";
-// import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ChatLayout from "./components/ChatLayout.jsx";
 
 function App() {
   
 // TODO: implement this with apis
 // const [userId, setUserId] = useState("");
   const userId = "123"
+  
   return (
     <>
-      <main>
-        <div className="chat-container">
-          <header>
-            <a href="all-chats">
-              <FontAwesomeIcon icon={faCommentDots} color="black"/>
-            </a>
-            <h4>پشتیبان آنلاین</h4>
-          </header>
-          <div className="chat-section">
-            <Chat userId={userId} />
-          </div>
-        </div>
-      </main>
+    <Router>
+      <Routes>
+          <Route path="/" element={
+            <ChatLayout userId={userId}/>
+          }/>
+          <Route path="/all-chats" element={
+              <AllChats userId={userId}/>
+            } />
+          <Route path="/chat/:chatId" element={
+            <ChatLayout userId={userId}/>
+          } />
+      </Routes>
+    </Router>
+      
     </>
   );
 }
