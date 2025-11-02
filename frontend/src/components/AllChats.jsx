@@ -1,8 +1,6 @@
 import { Link} from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
 
 function AllChats({ userId }) {
   const [chats, setChats] = useState([]);
