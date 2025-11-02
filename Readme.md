@@ -1,0 +1,56 @@
+# ChatBot App 💬
+
+A simple full-stack chat application with a chatbot interface built using React for the frontend.
+
+---
+
+## 🚀 Features
+- Interactive chat interface  
+- Real-time message handling  
+- Backend API connection  
+- Modular and easy to extend
+
+---
+
+## 🛠️ Tech Stack
+**Frontend:** React, React Router  
+**Backend:** Node.js, Express  
+**Database:** MongoDB  
+
+---
+
+## ⚙️ Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/NiushaEbrahimi/test-project.git
+cd test-project
+```
+
+### 2. Install dependencies
+
+-for the frontend
+# Frontend
+cd frontend
+npm install
+
+-for the backend (in another terminal)
+# Backend
+cd ../backend
+npm install
+
+### 3. Start the application
+
+-for the frontend
+
+```bash
+npm run dev
+```
+
+-for the backend
+
+```bash
+npm start
+```
+
