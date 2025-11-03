@@ -22,7 +22,7 @@ function AllChats({ userId }) {
     };
 
     fetchChats();
-  }, [userId,chats,deleteChatState]);
+  }, [userId,deleteChatState]);
 
   async function deleteChat(chatId) {
     try {

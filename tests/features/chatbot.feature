@@ -64,7 +64,7 @@ Feature: Chatbot Account Software Testing
       Then the chat history should display all previous messages
       And the user can type a new question "<question>"
       And the chatbot should display the correct answer
-      And the new question should be saved in chat history
+      And the question should be saved in chat history
 
       Examples:
         | question                        |

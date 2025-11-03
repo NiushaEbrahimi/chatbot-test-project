@@ -53,14 +53,6 @@ class ChatbotPage:
             raise ValueError(f"No button ID mapped for question: {question}")
         self.driver.find_element(By.ID, button_id).click()
 
-    def click_follow_up_by_text(self, text):
-        """Click a follow-up button by its visible text."""
-        buttons = self.driver.find_elements(By.CLASS_NAME, "follow-up")
-        for btn in buttons:
-            if btn.text.strip() == text:
-                btn.click()
-                return
-        raise Exception(f"Follow-up button '{text}' not found.")
 
     def type_and_send(self, question):
         """Type a message and click Send."""
@@ -80,12 +72,11 @@ class ChatbotPage:
         # Click the last one (most recent bot message)
         copy_buttons[-1].click()
 
-    def delete_chat(self, chat_text, timeout=5):
-        """Click delete button next to a specific chat text and wait for it to disappear."""
+    def delete_chat(self, chat_text, timeout=10):
         chats = self.driver.find_elements(*self.CHAT_ITEM)
         target_chat = None
         for chat in chats:
-            if chat_text in chat.text:
+            if chat_text.strip() in chat.text.strip():
                 target_chat = chat
                 delete_btn = chat.find_element(*self.DELETE_BUTTON)
                 delete_btn.click()
@@ -94,8 +85,8 @@ class ChatbotPage:
             raise Exception(f"Chat '{chat_text}' not found for deletion.")
 
         # Wait until this specific chat element is removed from DOM
-        WebDriverWait(self.driver, timeout).until_not(
-            lambda d: target_chat in d.find_elements(*self.CHAT_ITEM)
+        WebDriverWait(self.driver, timeout).until(
+            lambda d: all(chat_text.strip() not in c.text.strip() for c in d.find_elements(*self.CHAT_ITEM))
         )
 
     def scroll_to_first_chat(self):

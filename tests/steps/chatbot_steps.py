@@ -22,6 +22,8 @@ def step_open_chatbot(context):
     context.last_question = None
     context.last_answer = None
 
+# TODO: put the undefined in gherkin
+
 @given("the user has previous chat history")
 def step_previous_history(context):
     context.page.click_view_history()
@@ -38,7 +40,6 @@ def step_click_predefined(context, question):
     context.page.click_predefined_question(question)
     time.sleep(1)
     context.last_question = question
-    # پاسخ از JSON
     answer = chatbot_db["exact_replies"].get(question, "")
     context.last_answer = answer
     context.chat_history.append({"question": question, "answer": answer})
@@ -55,26 +56,15 @@ def step_click_send(context):
     send_btn = context.page.driver.find_element(By.ID, "send-button")
     send_btn.click()
     time.sleep(0.5)
-    q = context.last_question
-    answer = None
 
-    # Check exact replies
-    if q in chatbot_db["exact_replies"]:
-        answer = chatbot_db["exact_replies"][q]
-    else:
-        # Check keyword replies
-        found = False
-        for kw_item in chatbot_db["keyword_replies"]:
-            if any(kw in q for kw in kw_item["keywords"]):
-                answer = kw_item["reply"]
-                found = True
-                break
-        if not found:
-            # Malformed / unrelated
-            answer = chatbot_db["unknown_responses"][0]
-
-    context.last_answer = answer
-    context.chat_history.append({"question": q, "answer": answer})
+    # Get ACTUAL bot response from UI
+    WebDriverWait(context.page.driver, 5).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, ".chat-message-bot"))
+    )
+    actual_answer = context.page.get_output_text()
+    
+    context.last_answer = actual_answer
+    context.chat_history.append({"question": context.last_question, "answer": actual_answer})
 
 @when('the user clicks "View Chat History"')
 def step_view_history(context):
@@ -100,6 +90,44 @@ def step_delete_chat(context, chat_text):
 def step_scroll_first_chat(context):
     context.page.scroll_to_first_chat()
     time.sleep(0.5)
+
+@when('the user asks multiple questions:')
+def step_ask_multiple_questions(context):
+    for row in context.table:
+        question = row['سوال']  # Header is Persian!
+        context.page.type_and_send(question)
+        time.sleep(0.3)  # Let UI update
+
+        # Replicate answer logic from step_click_send
+        if question in chatbot_db["exact_replies"]:
+            answer = chatbot_db["exact_replies"][question]
+        else:
+            answer = None
+            for kw_item in chatbot_db["keyword_replies"]:
+                if any(kw in question for kw in kw_item["keywords"]):
+                    answer = kw_item["reply"]
+                    break
+            if answer is None:
+                answer = chatbot_db["unknown_responses"][0]
+        context.chat_history.append({"question": question, "answer": answer})
+@when('the user can type a new question "{question}"')
+def step_type_new_question(context, question):
+    context.page.type_and_send(question)
+    time.sleep(0.3)
+    # Compute expected answer (same as step_click_send)
+    if question in chatbot_db["exact_replies"]:
+        answer = chatbot_db["exact_replies"][question]
+    else:
+        answer = None
+        for kw_item in chatbot_db["keyword_replies"]:
+            if any(kw in question for kw in kw_item["keywords"]):
+                answer = kw_item["reply"]
+                break
+        if answer is None:
+            answer = chatbot_db["unknown_responses"][0]
+    context.last_question = question
+    context.last_answer = answer
+    context.chat_history.append({"question": question, "answer": answer})
 
 # -------------------------------
 # Then steps
@@ -150,7 +178,7 @@ def step_check_deleted(context, chat_text):
     for item in chat_items:
         if chat_text in item.text:
             raise AssertionError(f"Chat '{chat_text}' still visible in history")
-    
+
 
 @then('the first chat "{chat_text}" should be visible')
 def step_check_first_chat(context, chat_text):
