@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faRobot } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faRobot , faCopy } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import chatbot_db from "../../public/data/chatbot_db.json";
@@ -54,29 +54,50 @@ function ChatMessages({ chatId , userId , addMessage, createChat }) {
         <div className="predefined-questions-container">
           {Object.keys(chatbot_db.exact_replies).map((question, i) => (
             <div key={i} className="predefined-questions">
-              <button onClick={()=>{
-                handleAdd("user", question);
-              }}>{question}</button>
+              <button
+              data-testid={`predefined-${encodeURIComponent(question)}`}
+              onClick={() => handleAdd("user", question)}
+            >
+              {question}
+            </button>
             </div>
           ))}
         </div>
       ) : (
-        messages.map((message, index) => (
-          <div
-            key={index}
+        messages.map((message) => (
+          <div 
             className={
-              message.role === "user"
-                ? "chat-message-container chat-message-user"
-                : "chat-message-container chat-message-bot"
-            }
+                message.role === "user"
+                  ? "chat-wrapper chat-wrapper-user"
+                  : "chat-wrapper chat-wrapper-bot"
+              }
           >
-            <div>
-              <FontAwesomeIcon
-                icon={message.role === "user" ? faUser : faRobot}
-                color={message.role === "user" ? "black" : "white"}
-              />
+            <div
+              className={
+                message.role === "user"
+                  ? "chat-message-container chat-message-user"
+                  : "chat-message-container chat-message-bot"
+              }
+            >
+              <div>
+                <FontAwesomeIcon
+                  icon={message.role === "user" ? faUser : faRobot}
+                  color={message.role === "user" ? "black" : "white"}
+                />
+              </div>
+              <p className="chat-output">{message.content}</p>
             </div>
-            <p className="chat-output">{message.content}</p>
+
+            {/* Copy button outside the message container */}
+            {message.role === "assistant" && (
+              <button
+                className="copy-btn"
+                onClick={() => navigator.clipboard.writeText(message.content)}
+                aria-label="Copy response"
+              >
+                <FontAwesomeIcon icon={faCopy} />
+              </button>
+            )}
           </div>
         ))
       )}

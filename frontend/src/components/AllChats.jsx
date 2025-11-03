@@ -4,6 +4,7 @@ import axios from "axios";
 
 function AllChats({ userId }) {
   const [chats, setChats] = useState([]);
+  const [deleteChatState, setDeleteChat] = useState(1);
   const API_BASE = "http://localhost:5000";
 
   useEffect(() => {
@@ -21,12 +22,14 @@ function AllChats({ userId }) {
     };
 
     fetchChats();
-  }, [userId,chats]);
+  }, [userId,chats,deleteChatState]);
 
   async function deleteChat(chatId) {
     try {
       await axios.delete(`${API_BASE}/chats/${chatId}`);
-      console.log("Chat deleted successfully");
+      setDeleteChat(deleteChatState+1);
+      console.log(deleteChatState)
+      console.log("deleted")
     } catch (err) {
       console.error("Error deleting chat:", err);
     }
@@ -41,9 +44,9 @@ function AllChats({ userId }) {
       <div className="list-container">
         <ul>
           {chats.map((chat) => (
-            <li key={chat._id}>
+            <li key={chat._id} className="chat-item">
               <Link to={`/chat/${chat._id}`}>{chat.title}</Link>
-              <span onClick={()=>deleteChat(chat._id)}>delete</span>
+              <span className="delete-btn" onClick={()=>deleteChat(chat._id)}>delete</span>
             </li>
           ))}
         </ul>

@@ -134,8 +134,8 @@ header > a:hover {
 
 .chat-message-user {
     background-color: #ffffff;
-    align-self: flex-end;
     direction: rtl;
+    width: 100%;
 }
 
 .chat-message-bot {
@@ -145,15 +145,24 @@ header > a:hover {
     color: white;
 }
 
-.chat-message-container {
+.chat-message-container , .chat-wrapper{
     display: inline-flex;
     align-items: start;
     flex-direction: row;
     padding: 0.5rem;
     border-radius: 1rem;
-    max-width: 80%;
     word-wrap: break-word;
     box-sizing: border-box;
+}
+.chat-wrapper{
+    max-width:80% ;
+}
+ 
+.chat-wrapper-user{
+    align-self: flex-end;
+}
+.chat-wrapper-bot{
+    align-self: flex-start;
 }
 
 .chat-message-container > div {
@@ -274,4 +283,14 @@ header > a:hover {
 .predefined-questions > button:hover{
     background-color: #ffffff41; 
     scale: 1.1;   
+}
+
+.copy-btn{
+    background-color: #4343432d;
+    color: black;
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    font-size: 0.7rem;
 }
