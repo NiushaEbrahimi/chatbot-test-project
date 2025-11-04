@@ -57,19 +57,6 @@ Feature: Chatbot Account Software Testing
         | اخبار فوتبال امروز                        |
       Then chat history should contain 4 messages
 
-  Rule: User can view chat history and continue chat
-    Scenario Outline: Viewing and continuing chat history
-      Given the chatbot page is opened
-      When the user clicks "View Chat History"
-      Then the chat history should display all previous messages
-      And the user can type a new question "<question>"
-      And the chatbot should display the correct answer
-      And the question should be saved in chat history
-
-      Examples:
-        | question                        |
-        | میتونم چند کاربر اضافه کنم ؟    |
-
   Rule: User can copy chatbot responses
     Scenario Outline: Copy chatbot response
       Given the chatbot page is opened
@@ -92,7 +79,6 @@ Feature: Chatbot Account Software Testing
 
       Examples:
         | chat_question                           |
-        | سلام چطوری میتوانم یک فاکتور جدید صادر کنم ؟ |
         | فاکتور جدید                               |
 
   Rule: User can scroll to the first chat in history

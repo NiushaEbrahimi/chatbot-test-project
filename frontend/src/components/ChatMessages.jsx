@@ -7,6 +7,7 @@ import getBotReply from '../assets/js/getBotReply';
 
 function ChatMessages({ chatId , userId , addMessage, createChat }) {
   const [messages, setMessages] = useState([]);
+  const [value, setValue] = useState("copyIcon");
   const [isNewChat, setIsNewChat] = useState(true);
   const API_BASE = "http://localhost:5000";
 
@@ -92,10 +93,16 @@ function ChatMessages({ chatId , userId , addMessage, createChat }) {
             {message.role === "assistant" && (
               <button
                 className="copy-btn"
-                onClick={() => navigator.clipboard.writeText(message.content)}
+                onClick={() => {
+                  navigator.clipboard.writeText(message.content);
+                  setValue("copied");
+                  setTimeout(() => {setValue("copyIcon")},700)
+                }
+                }
                 aria-label="Copy response"
               >
-                <FontAwesomeIcon icon={faCopy} />
+                {value==="copyIcon" ? <FontAwesomeIcon icon={faCopy} /> : <p>copied</p>}
+                
               </button>
             )}
           </div>

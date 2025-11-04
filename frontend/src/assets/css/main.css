@@ -19,7 +19,7 @@ main{
 
 .chat-container{
     width: 100%;
-    background: radial-gradient(white, lightyellow, lightblue);
+    background: radial-gradient(white, lightblue, lightyellow);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -111,7 +111,7 @@ header > a:hover {
 
 .input-container > form > button{
     box-shadow: 0px 0px 10px 0px #0000005a;
-    background-color: darkblue;
+    background-color: #060632;
     border: none;
     color: white;
     height: 100%;
@@ -156,6 +156,7 @@ header > a:hover {
 }
 .chat-wrapper{
     max-width:80% ;
+    flex-direction: column;
 }
  
 .chat-wrapper-user{
@@ -249,10 +250,11 @@ header > a:hover {
     font-size: 1rem;
 }
 
-.list-container > ul > li > span {
+.list-container > ul > li > button {
     display: block;
     background-color: grey;
     color: white;
+    border: none;
     padding: 0.5rem 0.8rem;
     border-radius: 1rem;
 }
@@ -287,10 +289,12 @@ header > a:hover {
 
 .copy-btn{
     background-color: #4343432d;
-    color: black;
+    color: #060632;
     border: none;
     border-radius: 1rem;
     cursor: pointer;
     padding: 0.5rem;
-    font-size: 0.7rem;
+    font-size: 1rem;
+    margin-top: 1vh;
+    transition-duration: 500ms;
 }
