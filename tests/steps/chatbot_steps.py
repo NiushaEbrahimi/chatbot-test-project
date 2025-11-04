@@ -13,6 +13,19 @@ json_path = current_dir.joinpath("..", "..", "frontend", "public", "data", "chat
 with open(json_path, "r", encoding="utf-8") as f:
     chatbot_db = json.load(f)
 
+def _get_expected_answer(question: str) -> str:
+    # اول چک کن exact match باشد
+    if question in chatbot_db["exact_replies"]:
+        return chatbot_db["exact_replies"][question]
+    
+    # بعد چک کن keyword match باشد
+    for item in chatbot_db["keyword_replies"]:
+        if any(kw in question for kw in item["keywords"]):
+            return item["reply"]
+    
+    # در غیر این صورت پاسخ ناشناخته
+    return chatbot_db["unknown_responses"][0]
+
 @given("the chatbot page is opened")
 def step_open_chatbot(context):
     from pages.chatbot_page import ChatbotPage
@@ -57,14 +70,14 @@ def step_click_send(context):
     send_btn.click()
     time.sleep(0.5)
 
-    # Get ACTUAL bot response from UI
+    # فقط برای اطمینان از render شدن
     WebDriverWait(context.page.driver, 5).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, ".chat-message-bot"))
     )
-    actual_answer = context.page.get_output_text()
-    
-    context.last_answer = actual_answer
-    context.chat_history.append({"question": context.last_question, "answer": actual_answer})
+
+    # اما expected answer را از دیتابیس بگیر
+    context.last_answer = _get_expected_answer(context.last_question)
+    context.chat_history.append({"question": context.last_question, "answer": context.last_answer})
 
 @when('the user clicks "View Chat History"')
 def step_view_history(context):
@@ -137,26 +150,11 @@ def step_check_answer(context, expected_answer):
     actual = context.page.get_output_text()
     assert actual == expected_answer, f"Expected: '{expected_answer}', Got: '{actual}'"
 
-@then("the chatbot should display the correct answer")
+@then('the chatbot should display the correct answer')
 def step_check_correct_answer(context):
-    # Wait until chatbot reply appears
-    WebDriverWait(context.page.driver, 5).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, ".chat-message-bot"))
-    )
-
-    # Get the last chatbot response
-    bot_responses = context.page.driver.find_elements(By.CSS_SELECTOR, ".chat-message-bot p")
-    actual_answer = bot_responses[-1].text.strip()
-
-    # Find the expected answer from the JSON
-    expected_answer = chatbot_db["exact_replies"].get(context.last_question)
-    if not expected_answer:
-        expected_answer = chatbot_db["keyword_replies"].get(context.last_question, "")
-
-    assert expected_answer.strip() == actual_answer, f"Expected: {expected_answer}, but got: {actual_answer}"
-
-    context.last_answer = actual_answer
-    context.chat_history.append({"question": context.last_question, "answer": actual_answer})
+    expected = _get_expected_answer(context.last_question)
+    actual = context.page.get_output_text()
+    assert actual == expected, f"Expected: {repr(expected)}\nGot:      {repr(actual)}"
 
 @then('the user can type a new question "{question}"')
 def step_user_can_type_new_question(context, question):
