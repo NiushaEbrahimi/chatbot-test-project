@@ -12,10 +12,19 @@ function getBotReply(input) {
     .replace(/\s+/g, ' ')
     .trim();
 
-  // 1. Check exact match
-  if (chatbotDb.exact_replies[normalized]) {
-    return chatbotDb.exact_replies[normalized];
+  // 1. Check exact match (normalize both sides)
+  for (const [key, value] of Object.entries(chatbotDb.exact_replies || {})) {
+    const keyNormalized = key
+      .toLowerCase()
+      .replace(/[؟?]+$/, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (keyNormalized === normalized) {
+      return value;
+    }
   }
+
 
   // 2. Check keyword-based replies
   for (const { keywords, reply } of chatbotDb.keyword_replies || []) {

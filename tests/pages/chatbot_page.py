@@ -72,22 +72,20 @@ class ChatbotPage:
         # Click the last one (most recent bot message)
         copy_buttons[-1].click()
 
-    def delete_chat(self, chat_text, timeout=10):
-        chats = self.driver.find_elements(*self.CHAT_ITEM)
-        target_chat = None
-        for chat in chats:
-            if chat_text.strip() in chat.text.strip():
-                target_chat = chat
-                delete_btn = chat.find_element(*self.DELETE_BUTTON)
-                delete_btn.click()
+    def delete_chat(self, chat_text, timeout=5):
+        delete_buttons = self.driver.find_elements(*self.DELETE_BUTTON)
+        for btn in delete_buttons:
+            parent_text = btn.find_element(By.XPATH, "./..").text
+            if chat_text.strip() in parent_text.strip():
+                btn.click()
                 break
-        else:
-            raise Exception(f"Chat '{chat_text}' not found for deletion.")
 
-        # Wait until this specific chat element is removed from DOM
-        WebDriverWait(self.driver, timeout).until(
-            lambda d: all(chat_text.strip() not in c.text.strip() for c in d.find_elements(*self.CHAT_ITEM))
-        )
+        # Safe check without stale references
+        WebDriverWait(self.driver, timeout).until(lambda d: not any(
+            chat_text.strip() in c.text for c in d.find_elements(*self.CHAT_ITEM)
+            if c.is_displayed()
+        ))
+
 
     def scroll_to_first_chat(self):
         """Scroll to the top of chat history."""

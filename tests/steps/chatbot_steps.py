@@ -137,6 +137,36 @@ def step_check_answer(context, expected_answer):
     actual = context.page.get_output_text()
     assert actual == expected_answer, f"Expected: '{expected_answer}', Got: '{actual}'"
 
+@then("the chatbot should display the correct answer")
+def step_check_correct_answer(context):
+    # Wait until chatbot reply appears
+    WebDriverWait(context.page.driver, 5).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, ".chat-message-bot"))
+    )
+
+    # Get the last chatbot response
+    bot_responses = context.page.driver.find_elements(By.CSS_SELECTOR, ".chat-message-bot p")
+    actual_answer = bot_responses[-1].text.strip()
+
+    # Find the expected answer from the JSON
+    expected_answer = chatbot_db["exact_replies"].get(context.last_question)
+    if not expected_answer:
+        expected_answer = chatbot_db["keyword_replies"].get(context.last_question, "")
+
+    assert expected_answer.strip() == actual_answer, f"Expected: {expected_answer}, but got: {actual_answer}"
+
+    context.last_answer = actual_answer
+    context.chat_history.append({"question": context.last_question, "answer": actual_answer})
+
+@then('the user can type a new question "{question}"')
+def step_user_can_type_new_question(context, question):
+    input_box = context.page.driver.find_element(By.ID, "chat-input")
+    input_box.clear()
+    input_box.send_keys(question)
+    context.last_question = question
+
+
+
 @then('the chatbot should display one of unknown_responses')
 def step_check_unknown(context):
     actual = context.page.get_output_text()
