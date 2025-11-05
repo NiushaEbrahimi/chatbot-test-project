@@ -16,11 +16,14 @@ with open(json_path, "r", encoding="utf-8") as f:
 
 
 def _get_expected_answer(question: str) -> str:
+
     if question in chatbot_db["exact_replies"]:
         return chatbot_db["exact_replies"][question]
+    
     for item in chatbot_db["keyword_replies"]:
         if any(kw in question for kw in item["keywords"]):
             return item["reply"]
+        
     return chatbot_db["unknown_responses"][0]
 
 
