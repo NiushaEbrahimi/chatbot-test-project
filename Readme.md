@@ -20,7 +20,8 @@ A simple full-stack chat application with a chatbot interface built using React 
 ---
 
 ## Demo
-[👁️ frontend-only preview] (https://test-project-r4mo.vercel.app/)
+
+[👁️ frontend-only preview](https://test-project-r4mo.vercel.app/)
 
 ---
 
