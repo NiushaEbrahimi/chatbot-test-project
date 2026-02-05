@@ -3,6 +3,19 @@ Feature: Chatbot Account Software Testing
   As a tester
   I want to test all question types, history access, and copying responses
 
+  Rule: Predefined questions should trigger correct responses
+  Scenario Outline: User clicks a predefined question button
+    Given the chatbot page is opened
+    When the user clicks the prepared question button "<question>"
+    Then the chatbot should display the correct answer
+    And the question should be saved in chat history
+
+    Examples:
+      | question                                      |
+      | سلام چطوری میتوانم یک فاکتور جدید صادر کنم ؟ |
+      | رمز عبورم رو فراموش کردم و باید چیکار کنم ؟ |
+      | میتونم گزارش فروش ماه قبل رو ببینم ؟       |
+      
   Rule: Typed questions that exactly match predefined replies
     Scenario Outline: User types an exact question
       Given the chatbot page is opened

@@ -7,7 +7,6 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 class ChatbotPage:
 
-
     URL = "http://localhost:5173"
 
     # -------------------------------
@@ -43,11 +42,10 @@ class ChatbotPage:
     # -------------------------------
 
     def click_predefined_question(self, question):
-        """Click one of the predefined question buttons."""
-        button_id = self.PREDEFINED_BUTTONS.get(question)
-        if not button_id:
-            raise ValueError(f"No button ID mapped for question: {question}")
-        self.driver.find_element(By.ID, button_id).click()
+        escaped_question = question.replace('"', '&quot;')
+        xpath = f'//button[@data-question="{escaped_question}"]'
+        button = self.driver.find_element(By.XPATH, xpath)
+        button.click()
 
     def type_and_send(self, question):
         """Type a message and click Send."""

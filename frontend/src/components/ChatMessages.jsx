@@ -57,6 +57,7 @@ function ChatMessages({ chatId , userId , addMessage, createChat }) {
             <div key={i} className="predefined-questions">
               <button
               data-testid={`predefined-${encodeURIComponent(question)}`}
+              data-question={question}
               onClick={() => handleAdd("user", question)}
             >
               {question}

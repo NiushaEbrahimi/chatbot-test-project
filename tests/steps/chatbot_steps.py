@@ -64,9 +64,8 @@ def step_click_predefined(context, question):
     context.page.click_predefined_question(question)
     time.sleep(SLEEP_TIME)
     context.last_question = question
-    answer = chatbot_db["exact_replies"].get(question, "")
-    context.last_answer = answer
-    context.chat_history.append({"question": question, "answer": answer})
+    context.last_answer = _get_expected_answer(question)
+    context.chat_history.append({"question": question, "answer": context.last_answer})
 
 
 @when('the user types "{question}"')
