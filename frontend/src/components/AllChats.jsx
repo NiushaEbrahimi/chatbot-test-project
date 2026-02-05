@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getChats, deleteChat } from "../services/chatService";
+import { getChats, deleteChat } from "../services/services";
 
 function AllChats({ userId }) {
   const [chats, setChats] = useState([]);
