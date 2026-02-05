@@ -1,4 +1,3 @@
-import Chat from "./components/Chat.jsx";
 import AllChats from "./components/AllChats.jsx";
 
 import "./assets/css/main.css";

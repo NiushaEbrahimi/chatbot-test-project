@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import chatbot_db from "../../public/data/chatbot_db.json";
 import getBotReply from '../assets/js/getBotReply';
+import { addMessage, createChat } from '../services/services';
 
-function ChatMessages({ chatId , userId , addMessage, createChat }) {
+function ChatMessages({ chatId , userId , setChatIdURL }) {
   const [messages, setMessages] = useState([]);
   const [value, setValue] = useState("copyIcon");
   const [isNewChat, setIsNewChat] = useState(true);
@@ -27,11 +28,23 @@ function ChatMessages({ chatId , userId , addMessage, createChat }) {
       });
   }, [chatId , messages , isNewChat]);
 
+  // creates chat
+  const handleCreate = async (userId, title) => {
+      try {
+          const res = await createChat(userId, title);
+          setChatIdURL(res.data._id);
+          return res.data;
+      } catch (err) {
+          console.error("Error creating chat:", err);
+      }
+  }
+
+  // add messages to the chat(if there is none there will be one created)
   async function handleAdd(role, content) {
     let currentChatId = chatId;
 
     if (!currentChatId) {
-      const chatData = await createChat(userId, content);
+      const chatData = await handleCreate(userId, content);
       currentChatId = chatData?._id;
       if (!currentChatId) return;
     }

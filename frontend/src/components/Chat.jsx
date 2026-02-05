@@ -1,37 +1,21 @@
-import axios from "axios";
+
 import { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import ChatMessages from "./ChatMessages.jsx";
 import { useParams } from "react-router-dom";
+import { createChat, addMessage } from "../services/services.jsx";
 import getBotReply from "../assets/js/getBotReply.js";
 
 function Chat({ userId }) {
+    
     const { chatId } = useParams();
     const [value, setValue] = useState("");
     const [chatIdURL, setChatIdURL] = useState(chatId || "");
 
-    const API_BASE = "http://localhost:5000";
-
-    async function createChat(userId, title) {
-        try {
-            const res = await axios.post(`${API_BASE}/chats`, { userId, title });
-            setChatIdURL(res.data._id);
-            return res.data;
-        } catch (err) {
-            console.error("Error creating chat:", err);
-        }
-    }
-
-    async function addMessage(chatId, role, content) {
-        try {
-            await axios.post(`${API_BASE}/chats/${chatId}/messages`, { role, content });
-        } catch (err) {
-            console.error("Error adding message:", err);
-        }
-    }
-
-    async function handleSend(e) {
+    
+    
+    async function handleSend(e, value, userId) {
         e.preventDefault();
         if (!value.trim()) return;
 
@@ -54,7 +38,7 @@ function Chat({ userId }) {
     return (
         <>
             <div className="chat-display">
-                <ChatMessages chatId={chatIdURL} userId={userId} addMessage={addMessage} createChat={createChat}/>
+                <ChatMessages chatId={chatIdURL} userId={userId} setChatIdURL={setChatIdURL}/>
             </div>
             <div className="input-container">
                 <form onSubmit={handleSend}>
