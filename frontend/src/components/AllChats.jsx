@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getChats, deleteChat } from "../services/services";
+import DemoBadge from "./Badge";
 
 function AllChats({ userId }) {
   const [chats, setChats] = useState([]);
@@ -32,27 +33,30 @@ function AllChats({ userId }) {
 
   return (
     <main className="main-all-chats">
-      <h3>تمام چت‌ها</h3>
+      <DemoBadge/>
+      <div>
+        <h3>تمام چت‌ها</h3>
 
-      <Link to={`/`} className="create-link">
-        <button>+ ایجاد صفحه چت جدید</button>
-      </Link>
+        <Link to={`/`} className="create-link">
+          <button>+ ایجاد صفحه چت جدید</button>
+        </Link>
 
-      <div className="list-container">
-        <ul>
-          {chats.map((chat) => (
-            <li key={chat._id} className="chat-item">
-              <Link to={`/chat/${chat._id}`}>{chat.title}</Link>
+        <div className="list-container">
+          <ul>
+            {chats.map((chat) => (
+              <li key={chat._id} className="chat-item">
+                <Link to={`/chat/${chat._id}`}>{chat.title}</Link>
 
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(chat._id)}
-              >
-                delete
-              </button>
-            </li>
-          ))}
-        </ul>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(chat._id)}
+                >
+                  delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </main>
   );

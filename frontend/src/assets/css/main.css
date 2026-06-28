@@ -308,3 +308,58 @@ header > a:hover {
     margin-top: 1vh;
     transition-duration: 500ms;
 }
+
+.demo-badge {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 200;
+}
+
+.badge-caret{
+    position: absolute;
+    top: 15%;
+    left: -7%;
+    color: #000;
+}
+
+.demo-badge__button {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: none;
+    background-color: rgb(121, 212, 121);
+    color: #060632;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    transition: transform 200ms ease;
+}
+
+.demo-badge__button:hover {
+    transform: translateY(-2px);
+}
+
+.demo-badge__tooltip {
+    position: relative;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(0.25rem);
+    transition: opacity 200ms ease, visibility 200ms ease, transform 200ms ease;
+    background-color: rgba(0, 0, 0, 0.82);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.demo-badge:hover .demo-badge__tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}

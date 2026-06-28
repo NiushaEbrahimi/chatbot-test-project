@@ -1,39 +1,51 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faRobot , faCopy } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from "react";
-import axios from "axios";
 import chatbot_db from "../../public/data/chatbot_db.json";
 import getBotReply from '../assets/js/getBotReply';
-import { addMessage, createChat } from '../services/services';
+import { addMessage, createChat, getMessages } from '../services/services';
 
 function ChatMessages({ chatId , userId , setChatIdURL }) {
   const [messages, setMessages] = useState([]);
   const [value, setValue] = useState("copyIcon");
   const [isNewChat, setIsNewChat] = useState(true);
-  const API_BASE = "http://localhost:5000";
 
   useEffect(() => {
     if (!chatId) return;
 
-    axios
-      .get(`${API_BASE}/chats/${chatId}/messages`)
-      .then((res) => {
-        const msgs = res.data.messages || [];
-        console.log(msgs)
+    let mounted = true;
+
+    const loadMessages = async () => {
+      try {
+        const msgs = await getMessages(chatId);
+        if (!mounted) return;
         setMessages(msgs);
         setIsNewChat(msgs.length === 0);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching messages:", err);
-      });
-  }, [chatId , messages , isNewChat]);
+      }
+    };
+
+    loadMessages();
+
+    const handleMockChange = () => {
+      loadMessages();
+    };
+
+    window.addEventListener("mockChatDataChanged", handleMockChange);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener("mockChatDataChanged", handleMockChange);
+    };
+  }, [chatId]);
 
   // creates chat
   const handleCreate = async (userId, title) => {
       try {
-          const res = await createChat(userId, title);
-          setChatIdURL(res.data._id);
-          return res.data;
+          const chat = await createChat(userId, title);
+          setChatIdURL(chat._id);
+          return chat;
       } catch (err) {
           console.error("Error creating chat:", err);
       }
@@ -49,24 +61,21 @@ function ChatMessages({ chatId , userId , setChatIdURL }) {
       if (!currentChatId) return;
     }
 
-    setMessages(prev => [...prev, { role: "user", content }]);
-    setIsNewChat(false);
-
     await addMessage(currentChatId, role, content);
 
     const botReply = getBotReply(content);
-
-    setMessages(prev => [...prev, { role: "assistant", content: botReply }]);
-
     await addMessage(currentChatId, "assistant", botReply);
-}
+  }
 
 
   return (
     <div className="chat-messages-container">
       {isNewChat ? (
         <div className="predefined-questions-container">
-          {Object.keys(chatbot_db.exact_replies).map((question, i) => (
+          {Object.keys(chatbot_db.exact_replies).map((question , i) => {
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            // const id = useId();
+            return(
             <div key={i} className="predefined-questions">
               <button
               data-testid={`predefined-${encodeURIComponent(question)}`}
@@ -76,11 +85,12 @@ function ChatMessages({ chatId , userId , setChatIdURL }) {
               {question}
             </button>
             </div>
-          ))}
+          )})}
         </div>
       ) : (
         messages.map((message) => (
           <div 
+            key={message.createdAt || `${message.role}-${message.content}`}
             className={
                 message.role === "user"
                   ? "chat-wrapper chat-wrapper-user"

@@ -2,10 +2,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCommentDots } from '@fortawesome/free-regular-svg-icons';
 import { Link } from 'react-router-dom';
 import Chat from './Chat.jsx';
+import DemoBadge from './Badge.jsx';
  
 function ChatLayout({userId}){
     return(
         <main>
+            <DemoBadge/>
             <div className="chat-container">
                 <header>
                     <Link to="/all-chats">

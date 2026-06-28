@@ -15,7 +15,7 @@ function Chat({ userId }) {
 
     
     
-    async function handleSend(e, value, userId) {
+    async function handleSend(e) {
         e.preventDefault();
         if (!value.trim()) return;
 
@@ -25,6 +25,7 @@ function Chat({ userId }) {
             const chatData = await createChat(userId, value);
             currentChatId = chatData?._id;
             if (!currentChatId) return;
+            setChatIdURL(currentChatId);
         }
 
         await addMessage(currentChatId, "user", value);
